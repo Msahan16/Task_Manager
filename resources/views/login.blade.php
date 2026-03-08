@@ -191,9 +191,11 @@ async function handleRegister(e) {
         });
         const data = await res.json();
         if (!res.ok) throw data;
-        sessionStorage.setItem('token', data.token);
-        Swal.fire({ title: 'Welcome!', text: 'Registered successfully.', icon: 'success', timer: 1200, showConfirmButton: false });
-        setTimeout(() => window.location.href = '/tasks', 1200);
+        Swal.fire({ title: 'Success!', text: 'Account created. Please login.', icon: 'success', timer: 1500, showConfirmButton: false });
+        setTimeout(() => {
+            document.getElementById('register-form').reset();
+            showAuthTab('login');
+        }, 1500);
     } catch (err) {
         showError(err);
     }
