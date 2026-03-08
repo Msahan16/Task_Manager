@@ -142,8 +142,9 @@
 
         .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
-        .due-date { font-size: 12px; color: #94a3b8; display: inline-flex; align-items: center; gap: 3px; }
-        .due-date .icon { font-size: 14px; }
+        .task-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+        .due-date { font-size: 11px; font-weight: 600; color: #4338ca; background: #eef2ff; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #c7d2fe; }
+        .due-date .icon { font-size: 15px; color: #6366f1; }
 
         .empty-state { text-align: center; padding: 40px 20px; }
         .empty-state .icon { font-size: 48px; color: #cbd5e1; margin-bottom: 12px; }
@@ -275,7 +276,7 @@
 
 <script>
 const API = '/api';
-let token = localStorage.getItem('token');
+let token = sessionStorage.getItem('token');
 let currentPage = 1;
 let trashPage = 1;
 let searchTimer;
@@ -289,7 +290,7 @@ let searchTimer;
         loadTasks();
     } catch {
         token = null;
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         window.location.href = '/login';
     }
 })();
@@ -300,7 +301,7 @@ async function api(path, options = {}) {
     if (token) headers['Authorization'] = 'Bearer ' + token;
     const res = await fetch(API + path, { ...options, headers });
     const data = await res.json();
-    if (res.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; return; }
+    if (res.status === 401) { sessionStorage.removeItem('token'); window.location.href = '/login'; return; }
     if (!res.ok) throw data;
     return data;
 }
@@ -309,7 +310,7 @@ async function api(path, options = {}) {
 async function handleLogout() {
     try { await api('/logout', { method: 'POST' }); } catch {}
     token = null;
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     window.location.href = '/login';
 }
 
@@ -344,11 +345,11 @@ function renderTasks(res) {
             <div class="task-info">
                 <h3>${esc(t.title)}</h3>
                 ${t.description ? '<p>' + esc(t.description) + '</p>' : ''}
-                <p>
+                <div class="task-meta">
                     <span class="badge badge-${t.status}">${t.status.replace('_',' ')}</span>
                     <span class="badge badge-${t.priority}">${t.priority}</span>
                     ${t.due_date ? '<span class="due-date"><span class="material-icons-round icon">event</span>' + t.due_date.split('T')[0] + '</span>' : ''}
-                </p>
+                </div>
             </div>
             <div class="task-actions">
                 <button class="btn btn-success btn-sm" onclick="openModal(${t.id})" title="Edit"><span class="material-icons-round" style="font-size:14px">edit</span> Edit</button>

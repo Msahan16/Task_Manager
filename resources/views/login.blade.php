@@ -133,10 +133,10 @@ const API = '/api';
 
 // If already logged in, redirect to tasks
 (function() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
         fetch(API + '/user', { headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + token } })
-            .then(r => { if (r.ok) window.location.href = '/tasks'; else localStorage.removeItem('token'); })
+            .then(r => { if (r.ok) window.location.href = '/tasks'; else sessionStorage.removeItem('token'); })
             .catch(() => {});
     }
 })();
@@ -168,7 +168,7 @@ async function handleLogin(e) {
         });
         const data = await res.json();
         if (!res.ok) throw data;
-        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('token', data.token);
         Swal.fire({ title: 'Welcome back!', text: 'Logged in successfully.', icon: 'success', timer: 1200, showConfirmButton: false });
         setTimeout(() => window.location.href = '/tasks', 1200);
     } catch (err) {
@@ -191,7 +191,7 @@ async function handleRegister(e) {
         });
         const data = await res.json();
         if (!res.ok) throw data;
-        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('token', data.token);
         Swal.fire({ title: 'Welcome!', text: 'Registered successfully.', icon: 'success', timer: 1200, showConfirmButton: false });
         setTimeout(() => window.location.href = '/tasks', 1200);
     } catch (err) {
