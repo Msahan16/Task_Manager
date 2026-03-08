@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; }
@@ -283,6 +284,7 @@ async function handleLogin(e) {
         token = data.token;
         localStorage.setItem('token', token);
         showApp(data.user);
+        Swal.fire({ title: 'Welcome back!', text: 'Logged in successfully.', icon: 'success', timer: 1500, showConfirmButton: false });
     } catch (err) {
         showError('auth-error', err);
     }
@@ -300,6 +302,7 @@ async function handleRegister(e) {
         token = data.token;
         localStorage.setItem('token', token);
         showApp(data.user);
+        Swal.fire({ title: 'Welcome!', text: 'Registered successfully.', icon: 'success', timer: 1500, showConfirmButton: false });
     } catch (err) {
         showError('auth-error', err);
     }
@@ -311,6 +314,7 @@ async function handleLogout() {
     localStorage.removeItem('token');
     document.getElementById('app-section').classList.add('hidden');
     document.getElementById('auth-section').classList.remove('hidden');
+    Swal.fire({ title: 'Goodbye!', text: 'Logged out successfully.', icon: 'success', timer: 1500, showConfirmButton: false });
 }
 
 function showApp(user) {
@@ -440,10 +444,13 @@ async function handleSaveTask(e) {
     try {
         if (id) {
             await api('/tasks/' + id, { method: 'PUT', body: JSON.stringify(body) });
+            closeModal();
+            Swal.fire({ title: 'Updated!', text: 'Task updated successfully.', icon: 'success', timer: 1500, showConfirmButton: false });
         } else {
             await api('/tasks', { method: 'POST', body: JSON.stringify(body) });
+            closeModal();
+            Swal.fire({ title: 'Created!', text: 'New task added successfully.', icon: 'success', timer: 1500, showConfirmButton: false });
         }
-        closeModal();
         loadTasks(currentPage);
     } catch (err) {
         showError('modal-error', err);
@@ -451,12 +458,22 @@ async function handleSaveTask(e) {
 }
 
 async function deleteTask(id) {
-    if (!confirm('Move this task to trash?')) return;
+    const result = await Swal.fire({
+        title: 'Move to Trash?',
+        text: 'This task will be moved to trash.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e63946',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    });
+    if (!result.isConfirmed) return;
     try {
         await api('/tasks/' + id, { method: 'DELETE' });
+        Swal.fire({ title: 'Deleted!', text: 'Task moved to trash.', icon: 'success', timer: 1500, showConfirmButton: false });
         loadTasks(currentPage);
     } catch (err) {
-        alert('Failed to delete task.');
+        Swal.fire('Error', 'Failed to delete task.', 'error');
     }
 }
 
@@ -496,16 +513,29 @@ function renderTrash(res) {
 async function restoreTask(id) {
     try {
         await api('/tasks/' + id + '/restore', { method: 'PATCH' });
+        Swal.fire({ title: 'Restored!', text: 'Task has been restored.', icon: 'success', timer: 1500, showConfirmButton: false });
         loadTrash(trashPage);
-    } catch { alert('Failed to restore.'); }
+    } catch { Swal.fire('Error', 'Failed to restore.', 'error'); }
 }
 
 async function forceDeleteTask(id) {
-    if (!confirm('Permanently delete this task? This cannot be undone.')) return;
+    const result = await Swal.fire({
+        title: 'Permanently Delete?',
+        text: 'This cannot be undone!',
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#e63946',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete forever!'
+    });
+    if (!result.isConfirmed) return;
     try {
         await api('/tasks/' + id + '/force-delete', { method: 'DELETE' });
+        Swal.fire({ title: 'Deleted!', text: 'Task permanently removed.', icon: 'success', timer: 1500, showConfirmButton: false });
         loadTrash(trashPage);
-    } catch { alert('Failed to delete.'); }
+    } catch {
+        Swal.fire('Error', 'Failed to delete.', 'error');
+    }
 }
 
 // --- Tabs ---
