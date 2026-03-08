@@ -7,12 +7,12 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        h1 { text-align: center; margin-bottom: 24px; color: #1a1a2e; }
-        .card { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 16px 20px; }
+        h1 { text-align: center; margin-bottom: 14px; color: #1a1a2e; font-size: 24px; }
+        .card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
         /* Auth forms */
-        .auth-container { max-width: 420px; margin: 60px auto; }
+        .auth-container { max-width: 420px; margin: 30px auto; padding: 0 16px; }
         .auth-tabs { display: flex; margin-bottom: 20px; }
         .auth-tabs button { flex: 1; padding: 12px; border: none; background: #e9ecef; cursor: pointer; font-size: 15px; transition: .2s; }
         .auth-tabs button.active { background: #4361ee; color: #fff; }
@@ -42,12 +42,12 @@
         .success-msg { color: #2ec4b6; font-size: 13px; margin-bottom: 10px; }
 
         /* Header bar */
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .header-bar span { font-size: 15px; color: #555; }
 
         /* Filters */
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-        .filters select, .filters input { margin-bottom: 0; width: auto; min-width: 140px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .filters select, .filters input { margin-bottom: 0; flex: 1; min-width: 140px; }
 
         /* Task list */
         .task-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
@@ -74,13 +74,52 @@
         .modal h2 { margin-bottom: 16px; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
 
-        .tab-bar { display: flex; gap: 0; margin-bottom: 16px; }
+        .tab-bar { display: flex; gap: 0; margin-bottom: 10px; }
         .tab-bar button { padding: 8px 20px; border: 1px solid #ddd; background: #f8f9fa; cursor: pointer; font-size: 14px; }
         .tab-bar button.active { background: #4361ee; color: #fff; border-color: #4361ee; }
         .tab-bar button:first-child { border-radius: 6px 0 0 6px; }
         .tab-bar button:last-child { border-radius: 0 6px 6px 0; }
 
         .hidden { display: none !important; }
+
+        /* Responsive - Tablet */
+        @media (max-width: 768px) {
+            .container { padding: 14px; }
+            h1 { font-size: 22px; }
+            .card { padding: 16px; }
+            .filters select, .filters input { min-width: 120px; }
+            .modal { width: 90vw; }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            h1 { font-size: 20px; margin-bottom: 10px; }
+            .card { padding: 14px; margin-bottom: 10px; }
+
+            .auth-container { margin: 16px auto; padding: 0 10px; max-width: 100%; }
+
+            .header-bar { flex-direction: column; gap: 8px; align-items: flex-start; }
+
+            .filters { flex-direction: column; }
+            .filters select, .filters input { width: 100%; min-width: unset; flex: unset; }
+
+            .task-item { flex-direction: column; gap: 8px; }
+            .task-actions { margin-left: 0; }
+
+            .tab-bar { width: 100%; }
+            .tab-bar button { flex: 1; padding: 10px 8px; font-size: 13px; }
+
+            .modal { padding: 18px; width: 100%; }
+
+            .modal-actions { flex-direction: column; }
+            .modal-actions .btn { width: 100%; }
+
+            .pagination { flex-wrap: wrap; }
+
+            .btn { padding: 10px 14px; }
+            .btn-sm { padding: 8px 10px; }
+        }
     </style>
 </head>
 <body>
@@ -328,7 +367,7 @@ function renderTasks(res) {
                 <p>
                     <span class="badge badge-${t.status}">${t.status.replace('_',' ')}</span>
                     <span class="badge badge-${t.priority}">${t.priority}</span>
-                    ${t.due_date ? '&nbsp; Due: ' + t.due_date : ''}
+                    ${t.due_date ? '&nbsp; Due: ' + t.due_date.split('T')[0] : ''}
                 </p>
             </div>
             <div class="task-actions">
